@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Emotion Detection | MindSentinel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7faff;
+            color: #263b59;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            min-height: 75px;
+            background: white;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 45px;
+
+            border-bottom: 1px solid #e5eaf2;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #263b59;
+        }
+
+        .nav-links {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #263b59;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #4776d0;
+        }
+
+        /* ================= MAIN ================= */
+
+        .emotion-page {
+            max-width: 1000px;
+            margin: 0 auto;
+
+            padding: 50px 25px 70px;
+        }
+
+        .emotion-page h1 {
+            font-size: 36px;
+            margin-bottom: 12px;
+            color: #263b59;
+        }
+
+        .emotion-description {
+            font-size: 17px;
+            color: #60728b;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* ================= INPUT CARD ================= */
+
+        .emotion-card {
+            background: white;
+
+            border: 1px solid #e2e9f3;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 6px 18px rgba(40, 70, 120, 0.07);
+        }
+
+        .emotion-card label {
+            display: block;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            margin-bottom: 10px;
+
+            color: #263b59;
+        }
+
+        .emotion-textarea {
+            width: 100%;
+
+            min-height: 150px;
+
+            resize: vertical;
+
+            padding: 16px;
+
+            border: 1px solid #d5dfec;
+
+            border-radius: 10px;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 16px;
+
+            color: #263b59;
+
+            outline: none;
+        }
+
+        .emotion-textarea:focus {
+            border-color: #4776d0;
+
+            box-shadow:
+                0 0 0 3px rgba(71, 118, 208, 0.10);
+        }
+
+        .analyze-btn {
+            margin-top: 20px;
+
+            border: none;
+
+            background: #4776d0;
+
+            color: white;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .analyze-btn:hover {
+            background: #365fae;
+        }
+
+        /* ================= RESULT ================= */
+
+        .result-card {
+            margin-top: 30px;
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            border: 2px solid #dfe8f5;
+
+            box-shadow:
+                0 6px 18px rgba(40, 70, 120, 0.08);
+        }
+
+        .result-title {
+            font-size: 24px;
+
+            font-weight: bold;
+
+            color: #263b59;
+
+            margin-bottom: 25px;
+        }
+
+        .result-main {
+            display: flex;
+
+            align-items: center;
+
+            gap: 25px;
+
+            padding: 20px;
+
+            background: #f5f8ff;
+
+            border-radius: 12px;
+        }
+
+        .emotion-icon {
+            font-size: 55px;
+        }
+
+        .emotion-name {
+            font-size: 30px;
+
+            font-weight: bold;
+
+            color: #4776d0;
+
+            text-transform: capitalize;
+        }
+
+        .confidence-box {
+            margin-top: 25px;
+        }
+
+        .confidence-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            margin-bottom: 8px;
+
+            font-size: 15px;
+
+            font-weight: 600;
+        }
+
+        .confidence-bar {
+            width: 100%;
+
+            height: 12px;
+
+            background: #e6edf7;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+
+            background: #4776d0;
+
+            border-radius: 20px;
+
+            transition: width 0.5s ease;
+        }
+
+        .analyzed-text {
+            margin-top: 25px;
+
+            padding: 18px;
+
+            background: #fafcff;
+
+            border-left: 4px solid #4776d0;
+
+            border-radius: 8px;
+
+            color: #53657d;
+
+            line-height: 1.6;
+        }
+
+        .analyzed-text strong {
+            color: #263b59;
+        }
+
+        /* ================= INFO ================= */
+
+        .privacy-box {
+            margin-top: 25px;
+
+            padding: 18px 20px;
+
+            background: #f8faff;
+
+            border-radius: 10px;
+
+            color: #60728b;
+
+            line-height: 1.6;
+
+            font-size: 14px;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            display: flex;
+
+            gap: 15px;
+
+            margin-top: 25px;
+
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            text-decoration: none;
+
+            padding: 11px 20px;
+
+            border-radius: 8px;
+
+            font-weight: 600;
+
+            color: #4776d0;
+
+            border: 1px solid #4776d0;
+
+            background: white;
+        }
+
+        .action-btn:hover {
+            background: #eef4ff;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+            background: white;
+
+            border-top: 1px solid #e5eaf2;
+
+            padding: 30px 40px;
+
+            text-align: center;
+
+            color: #60728b;
+        }
+
+        .footer h3 {
+            color: #263b59;
+
+            margin-bottom: 8px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 750px) {
+
+            .navbar {
+                padding: 15px 20px;
+
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                margin-left: 0;
+
+                margin-top: 12px;
+
+                flex-wrap: wrap;
+
+                gap: 12px;
+            }
+
+            .emotion-page h1 {
+                font-size: 30px;
+            }
+
+            .result-main {
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= NAVBAR ================= -->
+
+<header class="navbar">
+
+    <div class="logo">
+        🧠 <span>MindSentinel</span>
+    </div>
+
+
+    <nav class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('assessment') }}">
+            Assessment
+        </a>
+
+        <a href="{{ url_for('emotion') }}">
+            Emotion
+        </a>
+
+        <a href="{{ url_for('mood') }}">
+            Mood
+        </a>
+
+        <a href="{{ url_for('mood_history') }}">
+            Mood History
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="emotion-page">
+
+
+    <h1>
+        Emotion Detection
+    </h1>
+
+
+    <p class="emotion-description">
+
+        Express how you are feeling.
+        MindSentinel will analyze your text using
+        Natural Language Processing.
+
+    </p>
+
+
+    <!-- ================= INPUT ================= -->
+
+    <div class="emotion-card">
+
+        <form method="POST"
+              action="{{ url_for('emotion') }}">
+
+
+            <label for="text">
+                How are you feeling today?
+            </label>
+
+
+            <textarea
+                id="text"
+                name="text"
+                class="emotion-textarea"
+                placeholder="Example: I feel very lonely and sad today..."
+                required>{% if result %}{{ result['text'] }}{% endif %}</textarea>
+
+
+            <button
+                type="submit"
+                class="analyze-btn">
+
+                🔍 Analyze Emotion
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- ================= RESULT ================= -->
+
+    {% if result %}
+
+    <div class="result-card">
+
+
+        <div class="result-title">
+
+            🧠 Emotion Analysis Result
+
+        </div>
+
+
+        <div class="result-main">
+
+
+            <div class="emotion-icon">
+
+                {% set detected = result['emotion']|lower %}
+
+                {% if 'happy' in detected %}
+
+                    😊
+
+                {% elif 'sad' in detected %}
+
+                    😔
+
+                {% elif 'angry' in detected %}
+
+                    😡
+
+                {% elif 'fear' in detected %}
+
+                    😨
+
+                {% elif 'anxious' in detected %}
+
+                    😰
+
+                {% elif 'stress' in detected %}
+
+                    😫
+
+                {% elif 'disgust' in detected %}
+
+                    🤢
+
+                {% elif 'surprise' in detected %}
+
+                    😮
+
+                {% elif 'critical' in detected %}
+
+                    🚨
+
+                {% elif 'distress' in detected %}
+
+                    😟
+
+                {% else %}
+
+                    😐
+
+                {% endif %}
+
+            </div>
+
+
+            <div>
+
+                <div style="
+                    color:#60728b;
+                    font-size:15px;
+                    margin-bottom:6px;
+                ">
+                    Detected Emotion
+                </div>
+
+
+                <div class="emotion-name">
+
+                    {{ result['emotion'] }}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- CONFIDENCE -->
+
+        <div class="confidence-box">
+
+            <div class="confidence-header">
+
+                <span>
+                    Detection Confidence
+                </span>
+
+                <span>
+                    {{ "%.2f"|format(result['confidence']|float) }}%
+                </span>
+
+            </div>
+
+
+            <div class="confidence-bar">
+
+                <div
+                    class="confidence-fill"
+                    style="
+                        width: {{ result['confidence']|float }}%;
+                    ">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INPUT TEXT -->
+
+        <div class="analyzed-text">
+
+            <strong>
+                Your message:
+            </strong>
+
+            <br>
+
+            "{{ result['text'] }}"
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <a href="{{ url_for('emotion_history') }}"
+               class="action-btn">
+
+                📊 View Emotion History
+
+            </a>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="action-btn">
+
+                🏠 Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('ai_support') }}"
+               class="action-btn">
+
+                💬 AI Support
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- ================= PRIVACY ================= -->
+
+    <div class="privacy-box">
+
+        🔒 Your information should be handled confidentially.
+        This feature is for wellbeing support and screening,
+        not medical diagnosis.
+
+    </div>
+
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    <h3>
+        🧠 MindSentinel
+    </h3>
+
+    <p>
+        AI-Powered Dynamic Mental Health Monitoring and
+        Distress Prediction System
+    </p>
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+</body>
+
+</html>

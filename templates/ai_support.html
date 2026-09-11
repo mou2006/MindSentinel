@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Support | MindSentinel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7faff;
+            color: #263b59;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            min-height: 75px;
+            background: white;
+            display: flex;
+            align-items: center;
+            padding: 0 45px;
+            border-bottom: 1px solid #e5eaf2;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #263b59;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #4776d0;
+        }
+
+        /* MAIN */
+
+        .support-page {
+            max-width: 950px;
+            margin: auto;
+            padding: 50px 25px 70px;
+        }
+
+        .support-page h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #60728b;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* CHAT CARD */
+
+        .support-card {
+            background: white;
+            border: 1px solid #e2e9f3;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 6px 18px rgba(40, 70, 120, 0.07);
+        }
+
+        .support-card label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+
+            padding: 16px;
+
+            border: 1px solid #d5dfec;
+            border-radius: 10px;
+
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #4776d0;
+            box-shadow: 0 0 0 3px rgba(71,118,208,.10);
+        }
+
+        .send-btn {
+            margin-top: 18px;
+
+            border: none;
+            background: #4776d0;
+            color: white;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background: #365fae;
+        }
+
+        /* RESULT */
+
+        .response-card {
+            margin-top: 30px;
+
+            background: white;
+
+            border: 1px solid #dfe7f2;
+
+            border-radius: 16px;
+
+            padding: 30px;
+
+            box-shadow: 0 6px 18px rgba(40,70,120,.07);
+        }
+
+        .response-title {
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .emotion-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            background: #f5f8ff;
+
+            padding: 18px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .emotion-icon {
+            font-size: 42px;
+        }
+
+        .emotion-name {
+            font-size: 23px;
+            font-weight: bold;
+            color: #4776d0;
+            text-transform: capitalize;
+        }
+
+        .confidence {
+            color: #60728b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* AI MESSAGE */
+
+        .ai-message {
+            padding: 22px;
+
+            background: #f8faff;
+
+            border-left: 4px solid #4776d0;
+
+            border-radius: 8px;
+
+            color: #40536c;
+
+            line-height: 1.7;
+
+            font-size: 16px;
+        }
+
+        /* DISCLAIMER */
+
+        .disclaimer {
+            margin-top: 25px;
+
+            background: #fffaf0;
+
+            border-left: 4px solid #e0a73a;
+
+            padding: 17px 20px;
+
+            border-radius: 8px;
+
+            color: #6d5b37;
+
+            line-height: 1.6;
+
+            font-size: 14px;
+        }
+
+        /* ACTIONS */
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            text-decoration: none;
+
+            border: 1px solid #4776d0;
+
+            color: #4776d0;
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            font-weight: 600;
+        }
+
+        .action-btn:hover {
+            background: #eef4ff;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            background: white;
+
+            border-top: 1px solid #e5eaf2;
+
+            text-align: center;
+
+            padding: 30px;
+
+            color: #60728b;
+        }
+
+        .footer h3 {
+            color: #263b59;
+            margin-bottom: 8px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                margin-left: 0;
+                margin-top: 12px;
+                flex-wrap: wrap;
+            }
+
+            .support-page h1 {
+                font-size: 30px;
+            }
+
+            .emotion-row {
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+    <div class="logo">
+        🧠 <span>MindSentinel</span>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('assessment') }}">
+            Assessment
+        </a>
+
+        <a href="{{ url_for('emotion') }}">
+            Emotion
+        </a>
+
+        <a href="{{ url_for('mood') }}">
+            Mood
+        </a>
+
+        <a href="{{ url_for('mood_history') }}">
+            Mood History
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main class="support-page">
+
+
+    <h1>
+        🤖 AI Support
+    </h1>
+
+    <p class="subtitle">
+
+        Share how you are feeling.
+        MindSentinel analyzes your message and provides
+        supportive wellbeing guidance.
+
+    </p>
+
+
+    <!-- INPUT -->
+
+    <div class="support-card">
+
+        <form method="POST"
+              action="{{ url_for('ai_support') }}">
+
+            <label for="message">
+
+                How are you feeling?
+
+            </label>
+
+
+            <textarea
+                id="message"
+                name="message"
+                placeholder="Example: I am feeling stressed about my studies and I don't know what to do..."
+                required></textarea>
+
+
+            <button
+                type="submit"
+                class="send-btn">
+
+                🤖 Get AI Support
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- RESPONSE -->
+
+    {% if response %}
+
+    <div class="response-card">
+
+
+        <div class="response-title">
+
+            💙 MindSentinel Support
+
+        </div>
+
+
+        <!-- EMOTION -->
+
+        <div class="emotion-row">
+
+
+            <div class="emotion-icon">
+
+                {% set emotion_text = detected_emotion|lower %}
+
+                {% if 'happy' in emotion_text %}
+
+                    😊
+
+                {% elif 'sad' in emotion_text %}
+
+                    😔
+
+                {% elif 'angry' in emotion_text %}
+
+                    😡
+
+                {% elif 'fear' in emotion_text %}
+
+                    😨
+
+                {% elif 'anxious' in emotion_text %}
+
+                    😰
+
+                {% elif 'stress' in emotion_text %}
+
+                    😫
+
+                {% elif 'disgust' in emotion_text %}
+
+                    🤢
+
+                {% elif 'surprise' in emotion_text %}
+
+                    😮
+
+                {% elif 'critical' in emotion_text %}
+
+                    🚨
+
+                {% elif 'distress' in emotion_text %}
+
+                    😟
+
+                {% else %}
+
+                    😐
+
+                {% endif %}
+
+            </div>
+
+
+            <div>
+
+                <div style="
+                    color:#60728b;
+                    font-size:14px;
+                ">
+                    Detected Emotion
+                </div>
+
+
+                <div class="emotion-name">
+
+                    {{ detected_emotion }}
+
+                </div>
+
+
+                <div class="confidence">
+
+                    Confidence:
+                    {{ "%.2f"|format(confidence|float) }}%
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- AI RESPONSE -->
+
+        <div class="ai-message">
+
+            {{ response }}
+
+        </div>
+
+
+        <!-- DISCLAIMER -->
+
+        <div class="disclaimer">
+
+            ⚠️ <strong>Important:</strong>
+
+            MindSentinel provides supportive wellbeing
+            guidance and screening only. It is not a
+            medical diagnosis or a replacement for a
+            qualified mental-health professional.
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="actions">
+
+            <a href="{{ url_for('emotion') }}"
+               class="action-btn">
+
+                🧠 Analyze Emotion
+
+            </a>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="action-btn">
+
+                📊 Dashboard
+
+            </a>
+
+
+            <a href="{{ url_for('resources') }}"
+               class="action-btn">
+
+                📚 Resources
+
+            </a>
+
+        </div>
+
+
+    </div>
+
+    {% endif %}
+
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <h3>
+        🧠 MindSentinel
+    </h3>
+
+    <p>
+        AI-Powered Dynamic Mental Health Monitoring and
+        Distress Prediction System
+    </p>
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

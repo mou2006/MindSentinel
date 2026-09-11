@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mood History | MindSentinel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7faff;
+            color: #263b59;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            min-height: 75px;
+            background: white;
+
+            display: flex;
+            align-items: center;
+
+            padding: 0 50px;
+
+            border-bottom: 1px solid #e5eaf2;
+
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 27px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #263b59;
+        }
+
+        .nav-links {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #263b59;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #4776d0;
+        }
+
+        /* PAGE */
+
+        .history-page {
+            max-width: 1100px;
+            margin: auto;
+
+            padding: 45px 25px 70px;
+        }
+
+        .history-page h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #60728b;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+        /* SUMMARY CARDS */
+
+        .summary-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 35px;
+        }
+
+        .summary-card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 15px;
+
+            border: 1px solid #e3eaf4;
+
+            box-shadow:
+                0 5px 15px rgba(40, 70, 120, 0.06);
+        }
+
+        .summary-icon {
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .summary-title {
+            color: #60728b;
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .summary-value {
+            font-size: 25px;
+            font-weight: bold;
+            color: #263b59;
+        }
+
+        /* HISTORY CARD */
+
+        .history-card {
+            background: white;
+
+            border-radius: 15px;
+
+            border: 1px solid #e3eaf4;
+
+            padding: 25px;
+
+            box-shadow:
+                0 5px 15px rgba(40, 70, 120, 0.06);
+        }
+
+        .history-card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* TABLE */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f3f7ff;
+
+            color: #263b59;
+
+            text-align: left;
+
+            padding: 15px;
+
+            font-size: 15px;
+
+            border-bottom: 1px solid #dfe7f2;
+        }
+
+        td {
+            padding: 15px;
+
+            border-bottom: 1px solid #edf1f7;
+
+            color: #52657e;
+
+            font-size: 15px;
+        }
+
+        tr:hover td {
+            background: #fafcff;
+        }
+
+        /* MOOD */
+
+        .mood-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px 13px;
+
+            border-radius: 20px;
+
+            background: #eef4ff;
+
+            color: #315da8;
+
+            font-weight: 600;
+        }
+
+        .mood-emoji {
+            font-size: 21px;
+        }
+
+        /* EMPTY STATE */
+
+        .empty-state {
+            text-align: center;
+
+            padding: 55px 20px;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #263b59;
+        }
+
+        .empty-state p {
+            color: #697b91;
+            margin-bottom: 25px;
+        }
+
+        .track-btn {
+            display: inline-block;
+
+            text-decoration: none;
+
+            background: #4776d0;
+
+            color: white;
+
+            padding: 12px 22px;
+
+            border-radius: 8px;
+
+            font-weight: 600;
+        }
+
+        .track-btn:hover {
+            background: #365fae;
+        }
+
+        /* BACK BUTTON */
+
+        .back-section {
+            margin-top: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+
+            text-decoration: none;
+
+            color: #4776d0;
+
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            background: white;
+
+            border-top: 1px solid #e5eaf2;
+
+            padding: 30px 50px;
+
+            text-align: center;
+
+            color: #60728b;
+        }
+
+        .footer h3 {
+            color: #263b59;
+            margin-bottom: 8px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+
+            .navbar {
+                padding: 15px 20px;
+
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                margin-left: 0;
+
+                flex-wrap: wrap;
+
+                gap: 12px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-page h1 {
+                font-size: 30px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+    <div class="logo">
+        🧠 <span>MindSentinel</span>
+    </div>
+
+
+    <nav class="nav-links">
+
+        <a href="{{ url_for('home') }}">
+            Home
+        </a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('assessment') }}">
+            Assessment
+        </a>
+
+        <a href="{{ url_for('emotion') }}">
+            Emotion
+        </a>
+
+        <a href="{{ url_for('mood') }}">
+            Mood
+        </a>
+
+        <a href="{{ url_for('mood_history') }}">
+            History
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main class="history-page">
+
+
+    <h1>
+        📊 Mood History
+    </h1>
+
+    <p class="subtitle">
+        Track your emotional patterns and review your previous mood entries.
+    </p>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary-grid">
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                💙
+            </div>
+
+            <div class="summary-title">
+                Total Mood Entries
+            </div>
+
+            <div class="summary-value">
+
+                {{ moods|length }}
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                😊
+            </div>
+
+            <div class="summary-title">
+                Latest Mood
+            </div>
+
+            <div class="summary-value">
+
+                {% if moods %}
+
+                    {{ moods[0]['mood'] }}
+
+                {% else %}
+
+                    No data
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-icon">
+                🧠
+            </div>
+
+            <div class="summary-title">
+                Wellbeing Tracking
+            </div>
+
+            <div class="summary-value">
+                Active
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- HISTORY -->
+
+    <div class="history-card">
+
+        <h2>
+            Your Mood Entries
+        </h2>
+
+
+        {% if moods %}
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Mood
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Time
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                {% for item in moods %}
+
+                    <tr>
+
+                        <td>
+                            {{ loop.index }}
+                        </td>
+
+
+                        <td>
+
+                            {% set mood_name = item['mood'] %}
+
+                            <span class="mood-badge">
+
+                                {% if mood_name == 'Happy' %}
+                                    <span class="mood-emoji">😊</span>
+
+                                {% elif mood_name == 'Calm' %}
+                                    <span class="mood-emoji">😌</span>
+
+                                {% elif mood_name == 'Neutral' %}
+                                    <span class="mood-emoji">😐</span>
+
+                                {% elif mood_name == 'Sad' %}
+                                    <span class="mood-emoji">😔</span>
+
+                                {% elif mood_name == 'Anxious' %}
+                                    <span class="mood-emoji">😰</span>
+
+                                {% elif mood_name == 'Angry' %}
+                                    <span class="mood-emoji">😡</span>
+
+                                {% elif mood_name == 'Stressed' %}
+                                    <span class="mood-emoji">😫</span>
+
+                                {% elif mood_name == 'Fear' %}
+                                    <span class="mood-emoji">😨</span>
+
+                                {% else %}
+                                    <span class="mood-emoji">🙂</span>
+                                {% endif %}
+
+                                {{ mood_name }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item['created_at'] %}
+
+                                {{ item['created_at'][:10] }}
+
+                            {% else %}
+
+                                --
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if item['created_at'] %}
+
+                                {{ item['created_at'][11:19] }}
+
+                            {% else %}
+
+                                --
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- NO DATA -->
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                🌱
+            </div>
+
+            <h3>
+                No mood history yet
+            </h3>
+
+            <p>
+                Start tracking your mood to build your personal
+                emotional wellbeing history.
+            </p>
+
+            <a href="{{ url_for('mood') }}"
+               class="track-btn">
+
+                💙 Track My Mood
+
+            </a>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+    <!-- BACK -->
+
+    <div class="back-section">
+
+        <a href="{{ url_for('dashboard') }}"
+           class="back-btn">
+
+            ← Back to Dashboard
+
+        </a>
+
+    </div>
+
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <h3>
+        🧠 MindSentinel
+    </h3>
+
+    <p>
+        AI-Powered Dynamic Mental Health Monitoring and
+        Distress Prediction System
+    </p>
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

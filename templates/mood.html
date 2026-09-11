@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mood Tracking | MindSentinel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        /* PAGE */
+
+        .mood-page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 45px 30px 60px;
+        }
+
+        .mood-page h1 {
+            color: #263b59;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .mood-description {
+            color: #53657d;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+        /* MOOD GRID */
+
+        .mood-form {
+            width: 100%;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* HIDE RADIO */
+
+        .mood-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* CLICKABLE MOOD CARD */
+
+        .mood-option {
+            display: block;
+            cursor: pointer;
+        }
+
+        .mood-card {
+            background: white;
+            border: 2px solid #e3eaf4;
+            border-radius: 15px;
+            padding: 22px 20px;
+
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            min-height: 75px;
+
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .mood-card:hover {
+            border-color: #6c8fdc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 70, 120, 0.10);
+        }
+
+        /* SELECTED CARD */
+
+        .mood-option input[type="radio"]:checked + .mood-card {
+            border-color: #4776d0;
+            background: #eef4ff;
+            box-shadow: 0 0 0 3px rgba(71, 118, 208, 0.12);
+        }
+
+        .mood-emoji {
+            font-size: 30px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .mood-name {
+            font-size: 18px;
+            font-weight: 500;
+            color: #263b59;
+        }
+
+        /* SAVE BUTTON */
+
+        .save-mood-btn {
+            border: none;
+            background: #4776d0;
+            color: white;
+
+            padding: 13px 25px;
+            border-radius: 8px;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .save-mood-btn:hover {
+            background: #365fae;
+            transform: translateY(-1px);
+        }
+
+        /* INFO BOX */
+
+        .mood-info {
+            margin-top: 35px;
+            padding: 22px 25px;
+
+            background: #f8faff;
+            border-radius: 12px;
+            border-left: 4px solid #6c8fdc;
+        }
+
+        .mood-info h3 {
+            color: #263b59;
+            margin-bottom: 8px;
+        }
+
+        .mood-info p {
+            color: #53657d;
+            line-height: 1.6;
+            margin-bottom: 7px;
+        }
+
+        /* FOOTER */
+
+        .mood-footer {
+            margin-top: 30px;
+            padding: 25px 30px;
+
+            background: white;
+            border-top: 1px solid #e5eaf2;
+        }
+
+        .mood-footer h3 {
+            color: #263b59;
+            margin-bottom: 8px;
+        }
+
+        .mood-footer p {
+            color: #53657d;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .mood-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mood-page {
+                padding: 30px 18px;
+            }
+
+            .mood-page h1 {
+                font-size: 30px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<!-- NAVBAR -->
+
+<header class="navbar">
+
+    <div class="logo">
+        🧠 <span>MindSentinel</span>
+    </div>
+
+    <nav class="nav-links">
+
+        <a href="{{ url_for('home') }}">Home</a>
+
+        <a href="{{ url_for('dashboard') }}">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('assessment') }}">
+            Assessment
+        </a>
+
+        <a href="{{ url_for('emotion') }}">
+            Emotion
+        </a>
+
+        <a href="{{ url_for('mood_history') }}">
+            Mood History
+        </a>
+
+        <a href="{{ url_for('logout') }}">
+            Logout
+        </a>
+
+    </nav>
+
+</header>
+
+
+<!-- MAIN -->
+
+<main class="mood-page">
+
+    <h1>Track Your Mood</h1>
+
+    <p class="mood-description">
+        How are you feeling right now?
+        Select the mood that best describes your current emotional state.
+    </p>
+
+
+    <!-- MOOD FORM -->
+
+    <form method="POST"
+          action="{{ url_for('mood') }}"
+          class="mood-form">
+
+
+        <div class="mood-grid">
+
+
+            <!-- HAPPY -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Happy"
+                       required>
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😊</span>
+
+                    <span class="mood-name">
+                        Happy
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <!-- CALM -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Calm">
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😌</span>
+
+                    <span class="mood-name">
+                        Calm
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <!-- NEUTRAL -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Neutral">
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😐</span>
+
+                    <span class="mood-name">
+                        Neutral
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <!-- SAD -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Sad">
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😔</span>
+
+                    <span class="mood-name">
+                        Sad
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <!-- ANXIOUS -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Anxious">
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😰</span>
+
+                    <span class="mood-name">
+                        Anxious
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <!-- ANGRY -->
+
+            <label class="mood-option">
+
+                <input type="radio"
+                       name="mood"
+                       value="Angry">
+
+                <div class="mood-card">
+
+                    <span class="mood-emoji">😡</span>
+
+                    <span class="mood-name">
+                        Angry
+                    </span>
+
+                </div>
+
+            </label>
+
+
+        </div>
+
+
+        <!-- SAVE -->
+
+        <button type="submit"
+                class="save-mood-btn">
+
+            💙 Save My Mood
+
+        </button>
+
+    </form>
+
+
+    <!-- INFORMATION -->
+
+    <div class="mood-info">
+
+        <h3>💡 Why track your mood?</h3>
+
+        <p>
+            Regular mood tracking helps identify emotional patterns
+            over time and can support better wellbeing awareness.
+        </p>
+
+        <p>
+            🔒 Your mood information is stored securely for your
+            personal wellbeing tracking.
+        </p>
+
+    </div>
+
+</main>
+
+
+<!-- FOOTER -->
+
+<footer class="mood-footer">
+
+    <h3>🧠 MindSentinel</h3>
+
+    <p>
+        AI-Powered Dynamic Mental Health Monitoring and
+        Distress Prediction System
+    </p>
+
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
