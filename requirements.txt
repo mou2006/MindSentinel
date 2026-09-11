@@ -1,0 +1,7 @@
+flask
+gunicorn
+setuptools
+torch
+transformers
+nltk
+scikit-learn
